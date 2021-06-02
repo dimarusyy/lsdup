@@ -1,0 +1,9 @@
+{
+  "name": "lsdup",
+  "version-string": "1.0.0",
+  "description": "Cross-platform command-line application that receives a directory as parameter and outputs the groups of files in the directory that are duplicate in terms of contents",
+  "dependencies": [
+    "doctest",
+    "boost-iostreams"
+  ]
+}
