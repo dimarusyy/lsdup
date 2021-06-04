@@ -24,10 +24,10 @@ public:
         }
     }
 
-    std::map<std::size_t/*group id*/, std::list < fs::path >> lsdup()
+    std::map<std::size_t /*group id*/, std::list<fs::path>> lsdup()
     {
         // traverse directory
-        for (auto& p : fs::directory_iterator(_lookup_path))
+        for (auto &p : fs::directory_iterator(_lookup_path))
         {
             if (p.is_regular_file())
             {
@@ -40,33 +40,31 @@ public:
             }
         }
 
-        std::map<std::size_t/*group id*/, std::list < fs::path >> rc;
-        
+        std::map<std::size_t /*group id*/, std::list<fs::path>> rc;
+
         //
         std::size_t group_id = 1;
-        for (auto& p : _files_by_size)
+        for (auto &p : _files_by_size)
         {
             assert(p.second.size() != 0);
-            
-            if (p.second.size() == 1)
-            {
-                auto path = p.second.front();
-                rc[group_id++].push_back(path);
-                
+            if (p.second.size() < 2)
                 continue;
-            }
 
             // need to read file content
-            std::map < hasher::hash_t, std::list < fs::path >> file_by_hash;
-            for (auto& file_path : p.second)
+            std::map<hasher::hash_t, std::list<fs::path>> file_by_hash;
+            for (auto &file_path : p.second)
             {
                 auto hash = hasher::hash(file_path);
                 file_by_hash[hash].push_back(file_path);
             }
 
-            for (auto& p : file_by_hash)
+            for (auto &fbh : file_by_hash)
             {
-                for (auto& path : p.second)
+                assert(fbh.second.size() != 0);
+                if (fbh.second.size() < 2)
+                    continue;
+
+                for (auto &path : fbh.second)
                     rc[group_id].push_back(path);
                 group_id++;
             }
@@ -77,5 +75,5 @@ public:
 
 private:
     fs::path _lookup_path;
-    std::map < std::uintmax_t /*filesize*/, std::list<fs::path> > _files_by_size;
+    std::map<std::uintmax_t /*filesize*/, std::list<fs::path>> _files_by_size;
 };
